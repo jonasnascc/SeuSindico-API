@@ -9,37 +9,58 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Imovel {
+public abstract class Imovel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String nome;
 
-    private String descricao;
+    private String rua;
 
-    private Integer quantidadeApartamentos;
+    private String numero;
 
-    private Integer quantidadeAndares;
+    private String bairro;
 
-    private Integer apartamentosPorAndar;
+    private String cidade;
+
+    private String estado;
+
+    private String cep;
+
+    private String complemento;
+
+    private ImovelType tipo;
 
     @ManyToOne
     private Proprietario proprietario;
 
-    @ManyToOne
-    private Ocupante ocupante;
-
-    public Imovel(String nome, String descricao, Integer quantidadeApartamentos, Integer quantidadeAndares, Integer apartamentosPorAndar) {
+    public Imovel(
+            String nome,
+            String rua,
+            String numero,
+            String bairro,
+            String cidade,
+            String estado,
+            String cep,
+            String complemento,
+            ImovelType tipo
+    ){
         this.nome = nome;
-        this.descricao = descricao;
-        this.quantidadeApartamentos = quantidadeApartamentos;
-        this.quantidadeAndares = quantidadeAndares;
-        this.apartamentosPorAndar = apartamentosPorAndar;
+        this.rua = rua;
+        this.numero = numero;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
+        this.complemento = complemento;
+        this.tipo = tipo;
     }
 }

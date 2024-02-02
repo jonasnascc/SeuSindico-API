@@ -22,14 +22,10 @@ import java.util.Set;
 public class Proprietario extends Usuario{
     public static final UserType tipo = UserType.PROPRIETARIO;
 
-    @OneToMany
-    @JoinTable(name = "PROPRIETARIO_IMOVEL",
-            joinColumns = {@JoinColumn(name="proprietario_id")},
-            inverseJoinColumns = {@JoinColumn(name="imovel_id")})
+    @OneToMany(mappedBy = "proprietario")
     private Set<Imovel> imoveis;
 
-    @JoinTable(name = "PROPRIETARIO_CONTRATO")
-    @OneToMany
+    @OneToMany(mappedBy = "proprietario")
     private Set<Contrato> contratos;
 
     public Proprietario(String email, String senha, String nome, String cpf) {

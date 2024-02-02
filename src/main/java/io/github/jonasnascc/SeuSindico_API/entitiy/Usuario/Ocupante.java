@@ -20,8 +20,6 @@ public class Ocupante extends Usuario{
 
     public static final UserType tipo = UserType.OCUPANTE;
 
-    @OneToMany(mappedBy = "ocupante")
-    private Set<Imovel> imoveis;
 
     @OneToMany(mappedBy = "ocupante")
     private Set<Contrato> contratos;
