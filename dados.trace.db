@@ -22,3 +22,6 @@ ALTER TABLE COMODO RENAME name NOME VARCHAR(256) [42001-224]
 2024-02-02 15:47:37.041034-03:00 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "ALTER TABLE COMODO RENAME [*]""NAME"" NOME VARCHAR(256)"; expected "COLUMN, CONSTRAINT, TO"; SQL statement:
 ALTER TABLE COMODO RENAME "NAME" NOME VARCHAR(256) [42001-224]
+2024-02-05 15:29:26.136281-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "alter table contrato add pagamento_mensal[*]"; expected "data type"; SQL statement:
+alter table contrato add pagamento_mensal [42001-224]

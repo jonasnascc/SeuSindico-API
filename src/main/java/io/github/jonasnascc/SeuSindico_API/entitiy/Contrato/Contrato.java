@@ -39,6 +39,8 @@ public class Contrato {
 
     private ContratoStatus status;
 
+    private boolean pagamentoMensal;
+
     @OneToOne
     private Imovel imovel;
 
@@ -51,7 +53,18 @@ public class Contrato {
     @OneToMany(mappedBy = "contrato")
     private Set<Fatura> faturas;
 
-    public Contrato(Double preco, String observacoes, LocalDate dataInicio, LocalDate dataFim, Integer intervaloDias, Integer numeroParcelas, Imovel imovel, Proprietario proprietario, Ocupante ocupante, ContratoStatus status) {
+    public Contrato(Double preco,
+                    String observacoes,
+                    LocalDate dataInicio,
+                    LocalDate dataFim,
+                    Integer intervaloDias,
+                    Integer numeroParcelas,
+                    Imovel imovel,
+                    Proprietario proprietario,
+                    Ocupante ocupante,
+                    ContratoStatus status,
+                    boolean pagamentoMensal)
+    {
         this.preco = preco;
         this.observacoes = observacoes;
         this.dataInicio = dataInicio;
@@ -62,9 +75,18 @@ public class Contrato {
         this.proprietario = proprietario;
         this.ocupante = ocupante;
         this.status = status;
+        this.pagamentoMensal = pagamentoMensal;
     }
 
-    public Contrato(Double preco, String observacoes, LocalDate dataInicio, LocalDate dataFim, Integer intervaloDias, Integer numeroParcelas, ContratoStatus status) {
+    public Contrato(Double preco,
+                    String observacoes,
+                    LocalDate dataInicio,
+                    LocalDate dataFim,
+                    Integer intervaloDias,
+                    Integer numeroParcelas,
+                    ContratoStatus status,
+                    boolean pagamentoMensal)
+    {
         this.preco = preco;
         this.observacoes = observacoes;
         this.dataInicio = dataInicio;
@@ -72,6 +94,14 @@ public class Contrato {
         this.intervaloDias = intervaloDias;
         this.numeroParcelas = numeroParcelas;
         this.status = status;
+        this.pagamentoMensal = pagamentoMensal;
+    }
+
+    @PreRemove
+    public void removeFromDependencies() {
+        imovel.setContrato(null);
+        proprietario.removeContrato(this);
+        if(ocupante!=null) ocupante.removeContrato(this);
     }
 
     public void setAssinado() {

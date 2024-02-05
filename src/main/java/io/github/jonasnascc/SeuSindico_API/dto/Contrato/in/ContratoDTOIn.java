@@ -1,12 +1,11 @@
-package io.github.jonasnascc.SeuSindico_API.dto.Contrato;
+package io.github.jonasnascc.SeuSindico_API.dto.Contrato.in;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
 
-public record ContratoDTO(
+public record ContratoDTOIn(
         Double preco,
         String observacoes,
         @JsonFormat(pattern = "dd-MM-yyyy")
@@ -15,5 +14,7 @@ public record ContratoDTO(
         @JsonFormat(pattern = "dd-MM-yyyy")
         LocalDate dataFim,
         Integer intervaloDias,
-        Integer numeroParcelas
+        Integer numeroParcelas,
+
+        boolean pagamentoMensal
 ) {}

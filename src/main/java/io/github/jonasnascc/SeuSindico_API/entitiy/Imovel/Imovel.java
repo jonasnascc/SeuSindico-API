@@ -1,5 +1,6 @@
 package io.github.jonasnascc.SeuSindico_API.entitiy.Imovel;
 
+import io.github.jonasnascc.SeuSindico_API.entitiy.Contrato.Contrato;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Usuario;
@@ -41,6 +42,9 @@ public abstract class Imovel {
 
     @ManyToOne
     private Proprietario proprietario;
+
+    @OneToOne(mappedBy = "imovel")
+    private Contrato contrato;
 
     public Imovel(
             String nome,

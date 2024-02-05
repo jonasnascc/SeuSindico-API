@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
     private final UsuarioService service;
 
-    @PostMapping("signin")
+    @PostMapping("signup")
     public ResponseEntity<?> register(
             @RequestBody UsuarioDTO dto
     ) {

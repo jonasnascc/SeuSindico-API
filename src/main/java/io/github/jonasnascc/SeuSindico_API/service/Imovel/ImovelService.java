@@ -10,6 +10,7 @@ import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Casa;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Comodo;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Habitacao;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
+import io.github.jonasnascc.SeuSindico_API.service.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class ImovelService {
         Proprietario proprietario = usuarioRepository.findProprietarioById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário inválido ou não encontrado."));
 
-        Casa casa = convertDtoToCasa(dto);
+        Casa casa = DtoConverter.convertCasaDto(dto);
 
         Habitacao habitacao = persistHabitacao(casa.getHabitacao());
         casa.setHabitacao(habitacao);
@@ -51,7 +52,7 @@ public class ImovelService {
         Proprietario proprietario = usuarioRepository.findProprietarioById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário inválido ou não encontrado."));
 
-        Apartamento apartamento = convertDtoToApartamento(dto);
+        Apartamento apartamento = DtoConverter.convertApartamentoDto(dto);
         apartamento.setProprietario(proprietario);
 
         Set<Habitacao> habitacoes = apartamento.getHabitacoes().stream()
@@ -86,65 +87,7 @@ public class ImovelService {
         return habitacaoRepository.save(saved);
     }
 
-    public Apartamento convertDtoToApartamento(ApartamentoDTO dto) {
-        ImovelDTO detalhes = dto.imovelDetalhes();
-        Set<Habitacao> habitacoes = dto.habitacoes().stream()
-                .map(this::convertDtoToHabitacao)
-                .collect(Collectors.toSet());
 
-        return new Apartamento(
-                detalhes.nome(),
-                detalhes.rua(),
-                detalhes.numero(),
-                detalhes.bairro(),
-                detalhes.cidade(),
-                detalhes.estado(),
-                detalhes.cep(),
-                detalhes.complemento(),
-                dto.quantidadeAndares(),
-                dto.habitacoesPorAndar(),
-                habitacoes
-        );
-    }
-
-    public Casa convertDtoToCasa(CasaDTO dto) {
-        ImovelDTO detalhes = dto.imovelDetalhes();
-        Habitacao habitacao = convertDtoToHabitacao(dto.habitacao());
-
-        return new Casa(
-                detalhes.nome(),
-                detalhes.rua(),
-                detalhes.numero(),
-                detalhes.bairro(),
-                detalhes.cidade(),
-                detalhes.estado(),
-                detalhes.cep(),
-                detalhes.complemento(),
-                habitacao
-        );
-    }
-
-    public Habitacao convertDtoToHabitacao(HabitacaoDTO dto) {
-        Set<Comodo> comodos = dto.comodos().stream()
-                .map(this::convertDtoToComodo)
-                .collect(Collectors.toSet());
-
-        return new Habitacao(
-                dto.andar(),
-                dto.numero(),
-                dto.quantidadeComodos(),
-                dto.metrosQuadrados(),
-                comodos
-        );
-    }
-
-    public Comodo convertDtoToComodo(ComodoDTO dto) {
-        return new Comodo(
-                dto.nome(),
-                dto.metrosQuadrados(),
-                dto.detalhes()
-        );
-    }
 
 
 

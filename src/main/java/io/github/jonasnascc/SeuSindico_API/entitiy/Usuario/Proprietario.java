@@ -1,5 +1,6 @@
 package io.github.jonasnascc.SeuSindico_API.entitiy.Usuario;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Contrato.Contrato;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
 import jakarta.persistence.Entity;
@@ -23,9 +24,11 @@ public class Proprietario extends Usuario{
     public static final UserType tipo = UserType.PROPRIETARIO;
 
     @OneToMany(mappedBy = "proprietario")
+    @JsonIgnore
     private Set<Imovel> imoveis;
 
     @OneToMany(mappedBy = "proprietario")
+    @JsonIgnore
     private Set<Contrato> contratos;
 
     public Proprietario(String email, String senha, String nome, String cpf) {
@@ -41,5 +44,11 @@ public class Proprietario extends Usuario{
 
     public void removeImovel (Long id) {
         if(imoveis!=null) imoveis.removeIf(im -> im.getId().equals(id));
+    }
+
+    public void removeContrato (Contrato contrato) {
+        if(contratos!=null) {
+            contratos.removeIf(cont -> cont.getId().equals(contrato.getId()));
+        }
     }
 }
