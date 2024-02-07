@@ -38,6 +38,7 @@ public abstract class Imovel {
 
     private String complemento;
 
+    @Enumerated(EnumType.STRING)
     private ImovelType tipo;
 
     @ManyToOne

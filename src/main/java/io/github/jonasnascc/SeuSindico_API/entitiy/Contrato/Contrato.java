@@ -36,6 +36,7 @@ public class Contrato {
 
     private Integer numeroParcelas;
 
+    @Enumerated(EnumType.STRING)
     private ContratoStatus status;
 
     private boolean pagamentoMensal;

@@ -1,10 +1,7 @@
 package io.github.jonasnascc.SeuSindico_API.entitiy.Usuario;
 
 import io.github.jonasnascc.SeuSindico_API.entitiy.Contrato.Contrato;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +27,7 @@ public abstract class Usuario {
 
     private String senha;
 
+    @Enumerated(EnumType.STRING)
     protected UserType tipo;
 
     public Usuario(String nome, String cpf, String email, String senha, UserType tipo) {

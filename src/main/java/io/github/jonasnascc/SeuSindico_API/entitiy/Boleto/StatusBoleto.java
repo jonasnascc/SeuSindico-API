@@ -6,7 +6,7 @@ public enum StatusBoleto {
     VENCIDO("vencido"),
     PAGO("pago");
 
-    String status;
+    private String status;
 
     StatusBoleto(String status) {
         this.status = status;
