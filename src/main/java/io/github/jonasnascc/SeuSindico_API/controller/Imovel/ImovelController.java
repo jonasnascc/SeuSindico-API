@@ -1,7 +1,6 @@
 package io.github.jonasnascc.SeuSindico_API.controller.Imovel;
 
-import io.github.jonasnascc.SeuSindico_API.dto.Imovel.ApartamentoDTO;
-import io.github.jonasnascc.SeuSindico_API.dto.Imovel.CasaDTO;
+import io.github.jonasnascc.SeuSindico_API.dto.Imovel.ImovelDTO;
 import io.github.jonasnascc.SeuSindico_API.service.Imovel.ImovelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ public class ImovelController {
     @PostMapping("/users/{userId}/imoveis/casas")
     public ResponseEntity<?> saveCasa (
             @PathVariable String userId,
-            @RequestBody CasaDTO dto
+            @RequestBody ImovelDTO dto
     )
     {
         return ResponseEntity.ok(service.saveCasa(dto, userId));
@@ -25,7 +24,7 @@ public class ImovelController {
     @PostMapping("/users/{userId}/imoveis/apartamentos")
     public ResponseEntity<?> saveApartamento (
             @PathVariable String userId,
-            @RequestBody ApartamentoDTO dto
+            @RequestBody ImovelDTO dto
     )
     {
         return ResponseEntity.ok(service.saveApartamento(dto, userId));

@@ -1,8 +1,6 @@
 package io.github.jonasnascc.SeuSindico_API.dto.Contrato.out;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.github.jonasnascc.SeuSindico_API.dto.Imovel.ApartamentoDTO;
-import io.github.jonasnascc.SeuSindico_API.dto.Imovel.CasaDTO;
 import io.github.jonasnascc.SeuSindico_API.dto.Usuario.UsuarioSimplesDTO;
 import org.springframework.lang.Nullable;
 

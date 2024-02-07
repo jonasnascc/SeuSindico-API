@@ -29,7 +29,7 @@ public class ImovelService {
 
     private final ComodoRepository comodoRepository;
 
-    public Long saveCasa(CasaDTO dto, String userId) {
+    public Long saveCasa(ImovelDTO dto, String userId) {
         Proprietario proprietario = usuarioRepository.findProprietarioById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário inválido ou não encontrado."));
 
@@ -48,7 +48,7 @@ public class ImovelService {
         return saved.getId();
     }
 
-    public Long saveApartamento(ApartamentoDTO dto, String userId) {
+    public Long saveApartamento(ImovelDTO dto, String userId) {
         Proprietario proprietario = usuarioRepository.findProprietarioById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário inválido ou não encontrado."));
 
