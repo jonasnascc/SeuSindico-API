@@ -26,6 +26,7 @@ public class Boleto {
 
     private LocalDate dataVencimento;
 
+    @Enumerated(EnumType.STRING)
     private StatusBoleto status;
 
     @ManyToOne
