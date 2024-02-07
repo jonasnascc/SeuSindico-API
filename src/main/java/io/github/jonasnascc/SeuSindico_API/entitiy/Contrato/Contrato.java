@@ -1,6 +1,6 @@
 package io.github.jonasnascc.SeuSindico_API.entitiy.Contrato;
 
-import io.github.jonasnascc.SeuSindico_API.entitiy.Fatura.Fatura;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Boleto.Boleto;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
@@ -10,9 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -51,7 +50,7 @@ public class Contrato {
     private Ocupante ocupante;
 
     @OneToMany(mappedBy = "contrato")
-    private Set<Fatura> faturas;
+    private Set<Boleto> boletos;
 
     public Contrato(Double preco,
                     String observacoes,
@@ -102,6 +101,15 @@ public class Contrato {
         imovel.setContrato(null);
         proprietario.removeContrato(this);
         if(ocupante!=null) ocupante.removeContrato(this);
+    }
+
+    public void addBoleto(Boleto boleto) {
+        if(boletos == null) boletos = new HashSet<>();
+        boletos.add(boleto);
+    }
+
+    public void removeBoleto(Long boletoId) {
+        boletos.removeIf(bol -> bol.getId().equals(boletoId));
     }
 
     public void setAssinado() {

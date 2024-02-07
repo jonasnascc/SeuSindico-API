@@ -10,6 +10,7 @@ import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Usuario;
+import io.github.jonasnascc.SeuSindico_API.service.Boleto.BoletoService;
 import io.github.jonasnascc.SeuSindico_API.service.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,8 @@ public class ContratoService {
 
     private final ImovelRepository imovelRepository;
 
+    private final BoletoService boletoService;
+
     public Long send(ContratoDTOIn dto, String proprietarioId, Long imovelId, String ocupanteId) {
         Proprietario proprietario = this.validProprietario(proprietarioId);
         Ocupante ocupante = this.validOcupante(ocupanteId);
@@ -40,7 +43,10 @@ public class ContratoService {
         contrato.setProprietario(proprietario);
         contrato.setOcupante(ocupante);
 
-        return contratoRepository.save(contrato).getId();
+        Contrato savedContrato = contratoRepository.save(contrato);
+        boletoService.adicionarBoleto(savedContrato, true);
+
+        return savedContrato.getId();
     }
 
     public Long sign(Long contratoId, String ocupanteId) {
