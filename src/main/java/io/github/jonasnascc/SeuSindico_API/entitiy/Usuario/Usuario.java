@@ -9,12 +9,15 @@ import lombok.Setter;
 
 import java.util.Set;
 
-@Entity
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class Usuario {
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_usuario", discriminatorType = DiscriminatorType.STRING)
+public abstract class Usuario{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -28,15 +31,16 @@ public abstract class Usuario {
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    protected UserType tipo;
+    protected UserRole role;
 
-    public Usuario(String nome, String cpf, String email, String senha, UserType tipo) {
+    public Usuario(String nome, String cpf, String email, String senha, UserRole role) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.senha = senha;
-        this.tipo = tipo;
+        this.role = role;
     }
 
     public abstract Set<Contrato> getContratos();
+
 }

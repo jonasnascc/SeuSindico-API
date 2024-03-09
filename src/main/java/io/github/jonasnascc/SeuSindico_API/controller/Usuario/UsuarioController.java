@@ -12,18 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
     private final UsuarioService service;
 
-    @PostMapping("signup")
-    public ResponseEntity<?> register(
-            @RequestBody UsuarioDTO dto
-    ) {
-        return ResponseEntity.ok(service.register(dto));
-    }
-
-    @PostMapping("auth")
-    public ResponseEntity<?> login() {
-        return ResponseEntity.ok(null);
-    }
-
     @GetMapping("users/{id}")
     public ResponseEntity<?> getUser(
             @PathVariable String id

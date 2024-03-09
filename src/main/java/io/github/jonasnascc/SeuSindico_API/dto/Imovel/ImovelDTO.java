@@ -28,5 +28,4 @@ public record ImovelDTO(
          Integer quantidadeAndares,
          Integer habitacoesPorAndar
 ) {
-
 }
