@@ -111,7 +111,7 @@ public class ImovelService {
         comodos.forEach(comodo -> comodo.setResidencia(saved));
 
         saved.setComodos(comodos);
-        System.out.println("aqui chegou");
+
         return residenciaRepository.save(saved);
     }
 
