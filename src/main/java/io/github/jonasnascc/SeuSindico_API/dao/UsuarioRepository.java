@@ -22,4 +22,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
     @Query("select u from Usuario u where (u.email = :login or u.cpf = :login)")
     Optional<Usuario> findByLogin(String login);
 
+    @Query("select p from Proprietario p where (p.cpf = :login or p.email = :login)")
+    Optional<Proprietario> findProprietarioByLogin(String login);
+
+    @Query("select o from Ocupante o where (o.cpf = :login or o.email = :login)")
+    Optional<Ocupante> findOcupanteByLogin(String login);
+
 }

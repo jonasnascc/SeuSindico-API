@@ -32,8 +32,7 @@ public abstract class DtoConverter {
 
     public static ContratoDTOOut convertContrato(Contrato contrato) {
         ImovelType tipo = contrato.getImovel().getTipo();
-        ImovelDTO imovelDTO = tipo.equals(ImovelType.CASA) ?
-                convertCasa((Casa)contrato.getImovel()) : convertApartamento((Apartamento)contrato.getImovel());
+        ImovelDTO imovelDTO ;
 
         Proprietario proprietario = contrato.getProprietario();
         Ocupante ocupante = contrato.getOcupante();
@@ -42,7 +41,7 @@ public abstract class DtoConverter {
                 contrato.getPreco(),
                 new UsuarioSimplesDTO(proprietario.getId(), proprietario.getNome(), proprietario.getEmail()),
                 new UsuarioSimplesDTO(ocupante.getId(), ocupante.getNome(), ocupante.getEmail()),
-                imovelDTO,
+                null,
                 contrato.getObservacoes(),
                 contrato.getDataInicio(),
                 contrato.getDataFim(),
@@ -52,103 +51,85 @@ public abstract class DtoConverter {
         );
     }
 
-    public static ImovelDTO convertCasa(Casa casa) {
-        List<HabitacaoDTO> habitacoes = new ArrayList<>();
-        habitacoes.add(convertHabitacao(casa.getHabitacao(), casa.getId()));
+    public static ImovelDTO convertImovel(Imovel imovel){
         return new ImovelDTO(
-                casa.getNome(),
-                casa.getRua(),
-                casa.getNumero(),
-                casa.getBairro(),
-                casa.getCidade(),
-                casa.getEstado(),
-                casa.getCep(),
-                casa.getComplemento(),
-                casa.getTipo(),
-                habitacoes,
-                1,
-                1
-        );
-    }
-    public static ImovelDTO convertApartamento(Apartamento apartamento) {
-        return new ImovelDTO(
-                apartamento.getNome(),
-                apartamento.getRua(),
-                apartamento.getNumero(),
-                apartamento.getBairro(),
-                apartamento.getCidade(),
-                apartamento.getEstado(),
-                apartamento.getCep(),
-                apartamento.getComplemento(),
-                apartamento.getTipo(),
-                apartamento.getHabitacoes().stream().map(hab -> convertHabitacao(hab, apartamento.getId())).collect(Collectors.toList()),
-                apartamento.getQuantidadeAndares(),
-                apartamento.getHabitacoesPorAndar()
+                imovel.getNome(),
+                imovel.getDescricao(),
+                imovel.getQuantidadeAndares(),
+                imovel.getResidenciasPorAndar(),
+                convertEndereco(imovel.getEndereco()),
+                imovel.getResidencias().stream().map(DtoConverter::convertResidencia).collect(Collectors.toList()),
+                imovel.getTipo()
         );
     }
 
-    public static HabitacaoDTO convertHabitacao(Habitacao habitacao, Long codigoImovel) {
-        return new HabitacaoDTO(
-                codigoImovel,
-                habitacao.getAndar(),
-                habitacao.getNumero(),
-                habitacao.getQuantidadeComodos(),
-                habitacao.getMetrosQuadrados(),
-                habitacao.getComodos().stream().map(comodo -> convertComodo(comodo, habitacao.getId())).toList()
-        );
-    }
-
-    public static ComodoDTO convertComodo(Comodo comodo, Long codigoHabitacao) {
-        return new ComodoDTO(comodo.getNome(), comodo.getMetrosQuadrados(), comodo.getDetalhes(), codigoHabitacao);
-    }
-
-    public static Apartamento convertApartamentoDto(ImovelDTO dto) {
-        Set<Habitacao> habitacoes = dto.habitacoes().stream()
-                .map(DtoConverter::convertHabitacaoDto)
-                .collect(Collectors.toSet());
-
-        return new Apartamento(
+    public static Imovel convertImovelDto(ImovelDTO dto){
+        Imovel imovel = new Imovel(
                 dto.nome(),
-                dto.rua(),
-                dto.numero(),
-                dto.bairro(),
-                dto.cidade(),
-                dto.estado(),
-                dto.cep(),
-                dto.complemento(),
+                dto.descricao(),
                 dto.quantidadeAndares(),
-                dto.habitacoesPorAndar(),
-                habitacoes
+                dto.residenciasPorAndar(),
+                convertEnderecoDto(dto.endereco()),
+                dto.tipo()
+        );
+
+        imovel.setResidencias(
+                dto.residencias().stream()
+                        .map(DtoConverter::convertResidenciaDto).collect(Collectors.toSet())
+        );
+
+        return imovel;
+    }
+
+    public static EnderecoDTO convertEndereco(Endereco endereco){
+        return new EnderecoDTO(
+                endereco.getRua(),
+                endereco.getNumero(),
+                endereco.getBairro(),
+                endereco.getCidade(),
+                endereco.getEstado(),
+                endereco.getCep(),
+                endereco.getComplemento()
         );
     }
 
-    public static Casa convertCasaDto(ImovelDTO dto) {
-        Habitacao habitacao = convertHabitacaoDto(dto.habitacoes().get(0));
-
-        return new Casa(
-                dto.nome(),
+    public static Endereco convertEnderecoDto(EnderecoDTO dto) {
+        return new Endereco(
                 dto.rua(),
                 dto.numero(),
                 dto.bairro(),
                 dto.cidade(),
                 dto.estado(),
                 dto.cep(),
-                dto.complemento(),
-                habitacao
+                dto.complemento()
         );
     }
 
-    public static Habitacao convertHabitacaoDto(HabitacaoDTO dto) {
-        Set<Comodo> comodos = dto.comodos().stream()
-                .map(DtoConverter::convertComodoDto)
-                .collect(Collectors.toSet());
+    public static ResidenciaDTO convertResidencia(Residencia residencia){
+        return new ResidenciaDTO(
+                residencia.getAndar(),
+                residencia.getNumero(),
+                residencia.getQuantidadeComodos(),
+                residencia.getMetrosQuadrados(),
+                residencia.getComodos().stream().map(DtoConverter::convertComodo).collect(Collectors.toList())
+        );
+    }
 
-        return new Habitacao(
+    public static Residencia convertResidenciaDto(ResidenciaDTO dto) {
+        return new Residencia(
                 dto.andar(),
                 dto.numero(),
                 dto.quantidadeComodos(),
                 dto.metrosQuadrados(),
-                comodos
+                dto.comodos().stream().map(DtoConverter::convertComodoDto).collect(Collectors.toSet())
+        );
+    }
+
+    public static ComodoDTO convertComodo(Comodo comodo){
+        return new ComodoDTO(
+                comodo.getNome(),
+                comodo.getMetrosQuadrados(),
+                comodo.getDetalhes()
         );
     }
 
@@ -159,4 +140,6 @@ public abstract class DtoConverter {
                 dto.detalhes()
         );
     }
+
+
 }

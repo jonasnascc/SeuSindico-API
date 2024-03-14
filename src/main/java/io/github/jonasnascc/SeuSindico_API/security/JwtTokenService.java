@@ -39,19 +39,19 @@ public class JwtTokenService {
             return JWT.require(algorithm)
                     .withIssuer(ISSUER)
                     .build()
-                    .verify(token)
+                    .verify(token.replace("Bearer ", ""))
                     .getSubject();
         } catch (JWTVerificationException e) {
-            throw new JWTVerificationException("Token inválido ou expirado.");
+            throw new JWTVerificationException("Token inválido ou expirado. ");
         }
     }
 
     private Instant creationDate(){
-        return ZonedDateTime.now(ZoneId.of("America/Recife")).toInstant();
+        return ZonedDateTime.now(ZoneId.of("-03:00")).toInstant();
     }
 
     private Instant expirationDate() {
-        return ZonedDateTime.now(ZoneId.of("America/Recife")).plusHours(4).toInstant();
+        return ZonedDateTime.now(ZoneId.of("-03:00")).plusHours(4).toInstant();
     }
 
 }

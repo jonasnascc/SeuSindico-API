@@ -23,7 +23,7 @@ public class Comodo {
     private String detalhes;
 
     @ManyToOne
-    private Habitacao habitacao;
+    private Residencia residencia;
 
     public Comodo(String nome, Integer metrosQuadrados, String detalhes) {
         this.nome = nome;

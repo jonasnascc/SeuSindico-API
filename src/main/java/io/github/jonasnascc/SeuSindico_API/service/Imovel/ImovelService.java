@@ -1,22 +1,23 @@
 package io.github.jonasnascc.SeuSindico_API.service.Imovel;
 
 import io.github.jonasnascc.SeuSindico_API.dao.ComodoRepository;
-import io.github.jonasnascc.SeuSindico_API.dao.HabitacaoRepository;
 import io.github.jonasnascc.SeuSindico_API.dao.ImovelRepository;
+import io.github.jonasnascc.SeuSindico_API.dao.ResidenciaRepository;
 import io.github.jonasnascc.SeuSindico_API.dao.UsuarioRepository;
-import io.github.jonasnascc.SeuSindico_API.dto.Imovel.*;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Apartamento;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Casa;
+import io.github.jonasnascc.SeuSindico_API.dto.Imovel.ImovelDTO;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Comodo;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Habitacao;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Residencia;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Usuario;
 import io.github.jonasnascc.SeuSindico_API.service.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -25,70 +26,41 @@ public class ImovelService {
 
     private final UsuarioRepository usuarioRepository;
 
-    private final HabitacaoRepository habitacaoRepository;
+    private final ResidenciaRepository residenciaRepository;
 
     private final ComodoRepository comodoRepository;
 
-    public Long saveCasa(ImovelDTO dto, String userId) {
-        Proprietario proprietario = usuarioRepository.findProprietarioById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário inválido ou não encontrado."));
+    public Long salvarImovel(ImovelDTO dto, String login) {
+        Proprietario proprietario = usuarioRepository.findProprietarioByLogin(login)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
 
-        Casa casa = DtoConverter.convertCasaDto(dto);
-
-        Habitacao habitacao = persistHabitacao(casa.getHabitacao());
-        casa.setHabitacao(habitacao);
-
-        casa.setProprietario(proprietario);
-
-        Casa saved = imovelRepository.save(casa);
-
-        saved.getHabitacao().setImovel(saved);
-        habitacaoRepository.save(habitacao);
-
-        return saved.getId();
+        return persistirImovel(DtoConverter.convertImovelDto(dto), proprietario).getId();
     }
 
-    public Long saveApartamento(ImovelDTO dto, String userId) {
-        Proprietario proprietario = usuarioRepository.findProprietarioById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário inválido ou não encontrado."));
+    private Imovel persistirImovel(Imovel imovel, Proprietario proprietario){
+        Set<Residencia> residencias = imovel.getResidencias().stream().map(this::persistirResidencia).collect(Collectors.toSet());
+        imovel.setResidencias(null);
 
-        Apartamento apartamento = DtoConverter.convertApartamentoDto(dto);
-        apartamento.setProprietario(proprietario);
+        imovel.setProprietario(proprietario);
 
-        Set<Habitacao> habitacoes = apartamento.getHabitacoes().stream()
-                .map(this::persistHabitacao)
-                .collect(Collectors.toSet());
+        Imovel saved = imovelRepository.save(imovel);
+        residencias.forEach(res -> res.setImovel(saved));
 
-        apartamento.setHabitacoes(habitacoes);
+        imovel.setResidencias(residencias);
 
-        Apartamento saved = imovelRepository.save(apartamento);
-
-        habitacoes.forEach(hab -> {
-            hab.setImovel(saved);
-            habitacaoRepository.save(hab);
-        });
-
-        return saved.getId();
+        return imovelRepository.save(saved);
     }
 
-    public Habitacao persistHabitacao(Habitacao habitacao) {
-        Set<Comodo> comodos = new HashSet<>(habitacao.getComodos());
-        habitacao.getComodos().clear();
+    private Residencia persistirResidencia(Residencia residencia){
+        List<Comodo> comodos = comodoRepository.saveAll(residencia.getComodos());
+        residencia.setComodos(null);
 
-        Habitacao saved = habitacaoRepository.save(habitacao);
+        Residencia saved = residenciaRepository.save(residencia);
+        comodos.forEach(comodo -> comodo.setResidencia(saved));
 
-        saved.setComodos(
-                comodos.stream().map(comodo -> {
-                    comodo.setHabitacao(saved);
-                    return comodoRepository.save(comodo);
-                }).collect(Collectors.toSet())
-        );
+        saved.setComodos(Set.copyOf(comodos));
 
-        return habitacaoRepository.save(saved);
+        return residenciaRepository.save(saved);
     }
-
-
-
-
 
 }
