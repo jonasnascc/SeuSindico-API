@@ -1,11 +1,9 @@
 package io.github.jonasnascc.SeuSindico_API.service.Imovel;
 
-import io.github.jonasnascc.SeuSindico_API.dao.ComodoRepository;
-import io.github.jonasnascc.SeuSindico_API.dao.ImovelRepository;
-import io.github.jonasnascc.SeuSindico_API.dao.ResidenciaRepository;
-import io.github.jonasnascc.SeuSindico_API.dao.UsuarioRepository;
+import io.github.jonasnascc.SeuSindico_API.dao.*;
 import io.github.jonasnascc.SeuSindico_API.dto.Imovel.ImovelDTO;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Comodo;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Endereco;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Residencia;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
@@ -14,6 +12,7 @@ import io.github.jonasnascc.SeuSindico_API.service.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,6 +29,8 @@ public class ImovelService {
 
     private final ComodoRepository comodoRepository;
 
+    private final EnderecoRepository enderecoRepository;
+
     public Long salvarImovel(ImovelDTO dto, String login) {
         Proprietario proprietario = usuarioRepository.findProprietarioByLogin(login)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
@@ -43,23 +44,29 @@ public class ImovelService {
 
         imovel.setProprietario(proprietario);
 
-        Imovel saved = imovelRepository.save(imovel);
-        residencias.forEach(res -> res.setImovel(saved));
+        Endereco endereco = enderecoRepository.save(imovel.getEndereco());
+        imovel.setEndereco(endereco);
 
-        imovel.setResidencias(residencias);
+        Imovel saved = imovelRepository.save(imovel);
+
+        endereco.setImovel(saved);
+        enderecoRepository.save(endereco);
+
+        residencias.forEach(res -> res.setImovel(saved));
+        saved.setResidencias(residencias.stream().map(residenciaRepository::save).collect(Collectors.toSet()));
 
         return imovelRepository.save(saved);
     }
 
     private Residencia persistirResidencia(Residencia residencia){
-        List<Comodo> comodos = comodoRepository.saveAll(residencia.getComodos());
+        Set<Comodo> comodos = residencia.getComodos().stream().map(comodoRepository::save).collect(Collectors.toSet());
         residencia.setComodos(null);
 
         Residencia saved = residenciaRepository.save(residencia);
         comodos.forEach(comodo -> comodo.setResidencia(saved));
 
-        saved.setComodos(Set.copyOf(comodos));
-
+        saved.setComodos(comodos);
+        System.out.println("aqui chegou");
         return residenciaRepository.save(saved);
     }
 
