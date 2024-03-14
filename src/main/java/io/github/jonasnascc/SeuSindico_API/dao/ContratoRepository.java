@@ -11,5 +11,4 @@ import java.util.Optional;
 
 @Repository
 public interface ContratoRepository extends JpaRepository<Contrato, Long> {
-    Optional<Contrato> findContratoByImovelAndProprietarioAndOcupante(Imovel imovel, Proprietario proprietario, Ocupante ocupante);
 }

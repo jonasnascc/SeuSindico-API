@@ -58,4 +58,16 @@ public class Imovel {
         this.endereco = endereco;
         this.tipo = tipo;
     }
+
+    @PreRemove
+    private void removerDependencias() {
+        proprietario.removeImovel(this.id);
+        if(endereco!=null) endereco.setImovel(null);
+        if(residencias!=null) residencias.forEach(residencia -> residencia.setImovel(null));
+
+    }
+
+    public void removerResidencia(Long id) {
+        if(residencias!=null) residencias.removeIf(res -> res.getId().equals(id));
+    }
 }

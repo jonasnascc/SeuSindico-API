@@ -31,8 +31,6 @@ public abstract class DtoConverter {
     }
 
     public static ContratoDTOOut convertContrato(Contrato contrato) {
-        ImovelType tipo = contrato.getImovel().getTipo();
-        ImovelDTO imovelDTO ;
 
         Proprietario proprietario = contrato.getProprietario();
         Ocupante ocupante = contrato.getOcupante();
@@ -53,6 +51,7 @@ public abstract class DtoConverter {
 
     public static ImovelDTO convertImovel(Imovel imovel){
         return new ImovelDTO(
+                imovel.getId(),
                 imovel.getNome(),
                 imovel.getDescricao(),
                 imovel.getQuantidadeAndares(),

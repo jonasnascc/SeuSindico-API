@@ -16,13 +16,42 @@ public class ImovelController {
     private final JwtTokenService jwtTokenService;
 
     @PostMapping("/proprietario/imoveis")
-    public ResponseEntity<?> saveCasa (
+    public ResponseEntity<?> salvar (
             @RequestHeader("Authorization") String authorization,
             @RequestBody ImovelDTO dto
     )
     {
         String login = jwtTokenService.getSubject(authorization);
         return ResponseEntity.ok(service.salvarImovel(dto, login));
+    }
+
+    @GetMapping("/proprietario/imoveis")
+    public ResponseEntity<?> listar (
+            @RequestHeader("Authorization") String authorization
+    )
+    {
+        String login = jwtTokenService.getSubject(authorization);
+        return ResponseEntity.ok(service.listar(login));
+    }
+
+    @GetMapping("/proprietario/imoveis/{id}")
+    public ResponseEntity<?> procurar (
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Long id
+    )
+    {
+        String login = jwtTokenService.getSubject(authorization);
+        return ResponseEntity.ok(service.procurarImovel(id, login));
+    }
+
+    @DeleteMapping("/proprietario/imoveis/{id}")
+    public ResponseEntity<?> deletar (
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Long id
+    )
+    {
+        String login = jwtTokenService.getSubject(authorization);
+        return ResponseEntity.ok(service.deletar(id, login));
     }
 
 }

@@ -39,7 +39,6 @@ public class ContratoService {
         this.checkContratoExiste(imovel, proprietario, ocupante);
 
         Contrato contrato = DtoConverter.convertContratoDto(dto);
-        contrato.setImovel(imovel);
         contrato.setProprietario(proprietario);
         contrato.setOcupante(ocupante);
 
@@ -103,8 +102,8 @@ public class ContratoService {
     }
 
     private void checkContratoExiste(Imovel imovel, Proprietario proprietario, Ocupante ocupante) {
-        Optional<Contrato> optContrato = contratoRepository.findContratoByImovelAndProprietarioAndOcupante(imovel, proprietario, ocupante);
-        if(optContrato.isPresent()) throw new RuntimeException("Contrato já existe.");
+//        Optional<Contrato> optContrato = contratoRepository.findContratoByImovelAndProprietarioAndOcupante(imovel, proprietario, ocupante);
+//        if(optContrato.isPresent()) throw new RuntimeException("Contrato já existe.");
     }
 
 }

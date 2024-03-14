@@ -30,4 +30,9 @@ public class Comodo {
         this.metrosQuadrados = metrosQuadrados;
         this.detalhes = detalhes;
     }
+
+    @PreRemove
+    private void removeDependencies(){
+        if(residencia!=null) residencia.removeComodo(this.id);
+    }
 }

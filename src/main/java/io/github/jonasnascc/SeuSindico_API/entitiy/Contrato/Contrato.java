@@ -1,7 +1,7 @@
 package io.github.jonasnascc.SeuSindico_API.entitiy.Contrato;
 
 import io.github.jonasnascc.SeuSindico_API.entitiy.Boleto.Boleto;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Residencia;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
 import jakarta.persistence.*;
@@ -42,7 +42,7 @@ public class Contrato {
     private boolean pagamentoMensal;
 
     @OneToOne
-    private Imovel imovel;
+    private Residencia residencia;
 
     @ManyToOne
     private Proprietario proprietario;
@@ -59,7 +59,7 @@ public class Contrato {
                     LocalDate dataFim,
                     Integer intervaloDias,
                     Integer numeroParcelas,
-                    Imovel imovel,
+                    Residencia residencia,
                     Proprietario proprietario,
                     Ocupante ocupante,
                     ContratoStatus status,
@@ -71,7 +71,7 @@ public class Contrato {
         this.dataFim = dataFim;
         this.intervaloDias = intervaloDias;
         this.numeroParcelas = numeroParcelas;
-        this.imovel = imovel;
+        this.residencia = residencia;
         this.proprietario = proprietario;
         this.ocupante = ocupante;
         this.status = status;

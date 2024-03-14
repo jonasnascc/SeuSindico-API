@@ -12,6 +12,7 @@ import io.github.jonasnascc.SeuSindico_API.service.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,10 +33,54 @@ public class ImovelService {
     private final EnderecoRepository enderecoRepository;
 
     public Long salvarImovel(ImovelDTO dto, String login) {
-        Proprietario proprietario = usuarioRepository.findProprietarioByLogin(login)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        Proprietario proprietario = proprietarioValidado(login);
 
         return persistirImovel(DtoConverter.convertImovelDto(dto), proprietario).getId();
+    }
+
+    public Set<ImovelDTO> listar(String login) {
+        Proprietario proprietario = proprietarioValidado(login);
+
+        return proprietario.getImoveis().stream()
+                .map(DtoConverter::convertImovel).collect(Collectors.toSet());
+    }
+
+    public ImovelDTO procurarImovel(Long id, String login) {
+        Proprietario proprietario = proprietarioValidado(login);
+
+        Imovel imovel = imovelRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
+
+        if(imovel.getProprietario().getId().equals(proprietario.getId()))
+            return DtoConverter.convertImovel(imovel);
+        else throw new RuntimeException("Imóvel não encontrado.");
+    }
+
+    public ImovelDTO deletar(Long id, String login) {
+        ImovelDTO dto = procurarImovel(id, login);
+
+        Imovel imovel = imovelRepository.findById(dto.codigo()).get();
+        imovelRepository.delete(imovel);
+
+        Endereco endereco = imovel.getEndereco();
+        enderecoRepository.delete(endereco);
+
+        Set<Residencia> residencias = imovel.getResidencias();
+
+        List<Comodo> comodos = new ArrayList<>();
+        residencias.forEach(residencia -> {
+            comodos.addAll(residencia.getComodos());
+            residenciaRepository.delete(residencia);
+        });
+
+        comodos.forEach(comodo -> comodoRepository.delete(comodo));
+
+        return DtoConverter.convertImovel(imovel);
+    }
+
+    private Proprietario proprietarioValidado (String login) {
+        return usuarioRepository.findProprietarioByLogin(login)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
     }
 
     private Imovel persistirImovel(Imovel imovel, Proprietario proprietario){
@@ -69,5 +114,6 @@ public class ImovelService {
         System.out.println("aqui chegou");
         return residenciaRepository.save(saved);
     }
+
 
 }
