@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 public record ContratoDTOIn(
         Double preco,
+        Double valorAdiantado,
         String observacoes,
         @JsonFormat(pattern = "dd-MM-yyyy")
         @Nullable
@@ -16,5 +17,6 @@ public record ContratoDTOIn(
         Integer intervaloDias,
         Integer numeroParcelas,
 
-        boolean pagamentoMensal
+        boolean pagamentoMensal,
+        boolean prePago
 ) {}

@@ -58,9 +58,10 @@ public class ContratoService {
 
         savedContrato.setResidencia(residenciaRepository.save(residencia));
 
-        //boletoService.adicionarBoleto(savedContrato, true);
+        savedContrato = contratoRepository.save(savedContrato);
+        boletoService.gerarBoletos(savedContrato);
 
-        return contratoRepository.save(savedContrato).getId();
+        return savedContrato.getId();
     }
 
     public Long assinar(Long contratoId, String login) {

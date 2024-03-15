@@ -26,6 +26,8 @@ public class Contrato {
 
     private Double preco;
 
+    private Double valorAdiantado;
+
     private String observacoes;
 
     private LocalDate dataInicio;
@@ -36,10 +38,12 @@ public class Contrato {
 
     private Integer numeroParcelas;
 
+    private boolean pagamentoMensal;
+
+    private boolean prePago;
+
     @Enumerated(EnumType.STRING)
     private ContratoStatus status;
-
-    private boolean pagamentoMensal;
 
     @OneToOne
     private Residencia residencia;
@@ -79,15 +83,18 @@ public class Contrato {
     }
 
     public Contrato(Double preco,
+                    Double valorAdiantado,
                     String observacoes,
                     LocalDate dataInicio,
                     LocalDate dataFim,
                     Integer intervaloDias,
                     Integer numeroParcelas,
                     ContratoStatus status,
-                    boolean pagamentoMensal)
+                    boolean pagamentoMensal,
+                    boolean prePago)
     {
         this.preco = preco;
+        this.valorAdiantado = valorAdiantado;
         this.observacoes = observacoes;
         this.dataInicio = dataInicio;
         this.dataFim = dataFim;
@@ -95,6 +102,7 @@ public class Contrato {
         this.numeroParcelas = numeroParcelas;
         this.status = status;
         this.pagamentoMensal = pagamentoMensal;
+        this.prePago = prePago;
     }
 
     @PreRemove

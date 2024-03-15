@@ -20,13 +20,15 @@ public abstract class DtoConverter {
     public static Contrato convertContratoDto(ContratoDTOIn dto) {
         return new Contrato(
                 dto.preco(),
+                dto.valorAdiantado(),
                 dto.observacoes(),
                 dto.dataInicio(),
                 dto.dataFim(),
                 dto.pagamentoMensal() ? 30 : dto.intervaloDias(),
                 dto.numeroParcelas(),
                 ContratoStatus.PENDENTE,
-                dto.pagamentoMensal()
+                dto.pagamentoMensal(),
+                dto.prePago()
         );
     }
 
