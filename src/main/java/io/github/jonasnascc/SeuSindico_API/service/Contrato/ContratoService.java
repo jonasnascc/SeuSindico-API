@@ -1,9 +1,6 @@
 package io.github.jonasnascc.SeuSindico_API.service.Contrato;
 
-import io.github.jonasnascc.SeuSindico_API.dao.ContratoRepository;
-import io.github.jonasnascc.SeuSindico_API.dao.ImovelRepository;
-import io.github.jonasnascc.SeuSindico_API.dao.ResidenciaRepository;
-import io.github.jonasnascc.SeuSindico_API.dao.UsuarioRepository;
+import io.github.jonasnascc.SeuSindico_API.dao.*;
 import io.github.jonasnascc.SeuSindico_API.dto.Contrato.in.ContratoDTOIn;
 import io.github.jonasnascc.SeuSindico_API.dto.Contrato.out.ContratoDTOOut;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Contrato.Contrato;
@@ -34,6 +31,8 @@ public class ContratoService {
     private final ResidenciaRepository residenciaRepository;
 
     private final BoletoService boletoService;
+
+    private final BoletoRepository boletoRepository;
 
     public Long enviar(ContratoDTOIn dto, Long imovelId, Long residenciaId, String cpfOcupante, String login) {
         Proprietario proprietario = this.validProprietario(login);
@@ -96,6 +95,8 @@ public class ContratoService {
         if(!contrato.getProprietario().getId().equals(usuario.getId())) {
             throw new RuntimeException("Contrato não encontrado.");
         }
+
+        if(contrato.getBoletos() != null) boletoRepository.deleteAll(contrato.getBoletos());
 
         contratoRepository.delete(contrato);
     }
