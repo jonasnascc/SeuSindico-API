@@ -2,11 +2,13 @@ package io.github.jonasnascc.SeuSindico_API.service.Contrato;
 
 import io.github.jonasnascc.SeuSindico_API.dao.ContratoRepository;
 import io.github.jonasnascc.SeuSindico_API.dao.ImovelRepository;
+import io.github.jonasnascc.SeuSindico_API.dao.ResidenciaRepository;
 import io.github.jonasnascc.SeuSindico_API.dao.UsuarioRepository;
 import io.github.jonasnascc.SeuSindico_API.dto.Contrato.in.ContratoDTOIn;
 import io.github.jonasnascc.SeuSindico_API.dto.Contrato.out.ContratoDTOOut;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Contrato.Contrato;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Residencia;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Usuario;
@@ -29,28 +31,41 @@ public class ContratoService {
 
     private final ImovelRepository imovelRepository;
 
+    private final ResidenciaRepository residenciaRepository;
+
     private final BoletoService boletoService;
 
-    public Long send(ContratoDTOIn dto, String proprietarioId, Long imovelId, String ocupanteId) {
-        Proprietario proprietario = this.validProprietario(proprietarioId);
-        Ocupante ocupante = this.validOcupante(ocupanteId);
+    public Long enviar(ContratoDTOIn dto, Long imovelId, Long residenciaId, String cpfOcupante, String login) {
+        Proprietario proprietario = this.validProprietario(login);
+        Ocupante ocupante = this.validOcupante(cpfOcupante);
         Imovel imovel = this.validImovel(imovelId);
+        Residencia residencia = validResidencia(residenciaId);
 
-        this.checkContratoExiste(imovel, proprietario, ocupante);
+        Optional<Residencia> optResidencia = imovel.getResidencias().stream()
+                .filter(res -> res.getId().equals(residencia.getId())).findAny();
+
+        if(optResidencia.isEmpty()) throw new RuntimeException("Residencia não pertence a esse imóvel.");
+
+        this.checkContratoExiste(residenciaId);
 
         Contrato contrato = DtoConverter.convertContratoDto(dto);
         contrato.setProprietario(proprietario);
         contrato.setOcupante(ocupante);
 
         Contrato savedContrato = contratoRepository.save(contrato);
-        boletoService.adicionarBoleto(savedContrato, true);
 
-        return savedContrato.getId();
+        residencia.setContrato(savedContrato);
+
+        savedContrato.setResidencia(residenciaRepository.save(residencia));
+
+        //boletoService.adicionarBoleto(savedContrato, true);
+
+        return contratoRepository.save(savedContrato).getId();
     }
 
-    public Long sign(Long contratoId, String ocupanteId) {
+    public Long assinar(Long contratoId, String login) {
         Contrato contrato = validContrato(contratoId);
-        Ocupante ocupante = validOcupante(ocupanteId);
+        Ocupante ocupante = validOcupante(login);
 
         if( !contrato.getOcupante().getId().equals(ocupante.getId()) ) {
             throw new RuntimeException("Contrato não encontrado.");
@@ -61,20 +76,23 @@ public class ContratoService {
         return contratoRepository.save(contrato).getId();
     }
 
-    public Set<ContratoDTOOut> findContratos(String userId) {
-        Usuario user = usuarioRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
-        Set<Contrato> contratos = user.getContratos();
+    public Set<ContratoDTOOut> listar(String login) {
+        Usuario usuario = usuarioRepository.findByLogin(login)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        Set<Contrato> contratos = usuario.getContratos();
 
         if(contratos == null) return Collections.emptySet();
 
         return contratos.stream().map(DtoConverter::convertContrato).collect(Collectors.toSet());
     }
 
-    public void cancelar(Long contratoId, String proprietarioId){
+    public void cancelar(Long contratoId, String login){
+        Usuario usuario = usuarioRepository.findByLogin(login)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
         Contrato contrato = validContrato(contratoId);
-        Proprietario proprietario = validProprietario(proprietarioId);
 
-        if(!contrato.getProprietario().getId().equals(proprietario.getId())) {
+        // Por enquanto, somente o proprietario poderá cancelar o contrato.
+        if(!contrato.getProprietario().getId().equals(usuario.getId())) {
             throw new RuntimeException("Contrato não encontrado.");
         }
 
@@ -86,24 +104,29 @@ public class ContratoService {
                 .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
     }
 
+    private Residencia validResidencia(Long residenciaId){
+        return residenciaRepository.findById(residenciaId)
+                .orElseThrow(() -> new RuntimeException("Residencia não encontrada."));
+    }
+
     private Contrato validContrato(Long contratoId) {
         return contratoRepository.findById(contratoId)
-                .orElseThrow(() -> new RuntimeException("Contrato não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Contrato não encontrado."));
     }
 
     private Ocupante validOcupante(String ocupanteId) {
-        return usuarioRepository.findOcupanteById(ocupanteId)
+        return usuarioRepository.findOcupanteByLogin(ocupanteId)
                 .orElseThrow(() -> new RuntimeException("Ocupante não encontrado."));
     }
 
     private Proprietario validProprietario(String proprietarioId) {
-        return usuarioRepository.findProprietarioById(proprietarioId)
+        return usuarioRepository.findProprietarioByLogin(proprietarioId)
                 .orElseThrow(() -> new RuntimeException("Proprietário não encontrado."));
     }
 
-    private void checkContratoExiste(Imovel imovel, Proprietario proprietario, Ocupante ocupante) {
-//        Optional<Contrato> optContrato = contratoRepository.findContratoByImovelAndProprietarioAndOcupante(imovel, proprietario, ocupante);
-//        if(optContrato.isPresent()) throw new RuntimeException("Contrato já existe.");
+    private void checkContratoExiste(Long residenciaId) {
+        Optional<Contrato> optContrato = contratoRepository.findByResidenciaId(residenciaId);
+        if(optContrato.isPresent()) throw new RuntimeException("Contrato já existente.");
     }
 
 }

@@ -7,13 +7,11 @@ import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Endereco;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Residencia;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Usuario;
 import io.github.jonasnascc.SeuSindico_API.service.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -80,7 +78,7 @@ public class ImovelService {
 
     private Proprietario proprietarioValidado (String login) {
         return usuarioRepository.findProprietarioByLogin(login)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+                .orElseThrow(() -> new RuntimeException("Proprietário não encontrado."));
     }
 
     private Imovel persistirImovel(Imovel imovel, Proprietario proprietario){

@@ -99,8 +99,8 @@ public class Contrato {
 
     @PreRemove
     public void removeFromDependencies() {
-        //imovel.setContrato(null);
         proprietario.removeContrato(this);
+        residencia.setContrato(null);
         if(ocupante!=null) ocupante.removeContrato(this);
     }
 

@@ -31,15 +31,14 @@ public abstract class DtoConverter {
     }
 
     public static ContratoDTOOut convertContrato(Contrato contrato) {
-
         Proprietario proprietario = contrato.getProprietario();
         Ocupante ocupante = contrato.getOcupante();
         return new ContratoDTOOut(
                 contrato.getId(),
                 contrato.getPreco(),
-                new UsuarioSimplesDTO(proprietario.getId(), proprietario.getNome(), proprietario.getEmail()),
-                new UsuarioSimplesDTO(ocupante.getId(), ocupante.getNome(), ocupante.getEmail()),
-                null,
+                new UsuarioSimplesDTO(proprietario.getNome(), proprietario.getCpf()),
+                new UsuarioSimplesDTO(ocupante.getNome(), ocupante.getCpf()),
+                convertResidencia(contrato.getResidencia()),
                 contrato.getObservacoes(),
                 contrato.getDataInicio(),
                 contrato.getDataFim(),
@@ -106,6 +105,7 @@ public abstract class DtoConverter {
 
     public static ResidenciaDTO convertResidencia(Residencia residencia){
         return new ResidenciaDTO(
+                residencia.getId(),
                 residencia.getAndar(),
                 residencia.getNumero(),
                 residencia.getQuantidadeComodos(),
