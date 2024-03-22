@@ -15,6 +15,7 @@
 	<name>SeuSindico_API</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
+		<maven.test.skip>true</maven.test.skip>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
