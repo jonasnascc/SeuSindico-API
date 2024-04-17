@@ -5,7 +5,7 @@ import io.github.jonasnascc.SeuSindico_API.dto.Imovel.ImovelDTO;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Comodo;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Endereco;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Residencia;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Espaco;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
 import io.github.jonasnascc.SeuSindico_API.service.DtoConverter;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class ImovelService {
 
     private final UsuarioRepository usuarioRepository;
 
-    private final ResidenciaRepository residenciaRepository;
+    private final EspacoRepository espacoRepository;
 
     private final ComodoRepository comodoRepository;
 
@@ -63,12 +63,12 @@ public class ImovelService {
         Endereco endereco = imovel.getEndereco();
         enderecoRepository.delete(endereco);
 
-        Set<Residencia> residencias = imovel.getResidencias();
+        Set<Espaco> espacos = imovel.getEspacos();
 
         List<Comodo> comodos = new ArrayList<>();
-        residencias.forEach(residencia -> {
-            comodos.addAll(residencia.getComodos());
-            residenciaRepository.delete(residencia);
+        espacos.forEach(espaco -> {
+            comodos.addAll(espaco.getComodos());
+            espacoRepository.delete(espaco);
         });
 
         comodos.forEach(comodo -> comodoRepository.delete(comodo));
@@ -82,8 +82,8 @@ public class ImovelService {
     }
 
     private Imovel persistirImovel(Imovel imovel, Proprietario proprietario){
-        Set<Residencia> residencias = imovel.getResidencias().stream().map(this::persistirResidencia).collect(Collectors.toSet());
-        imovel.setResidencias(null);
+        Set<Espaco> espacos = imovel.getEspacos().stream().map(this::persistirEspaco).collect(Collectors.toSet());
+        imovel.setEspacos(null);
 
         imovel.setProprietario(proprietario);
 
@@ -95,22 +95,22 @@ public class ImovelService {
         endereco.setImovel(saved);
         enderecoRepository.save(endereco);
 
-        residencias.forEach(res -> res.setImovel(saved));
-        saved.setResidencias(residencias.stream().map(residenciaRepository::save).collect(Collectors.toSet()));
+        espacos.forEach(res -> res.setImovel(saved));
+        saved.setEspacos(espacos.stream().map(espacoRepository::save).collect(Collectors.toSet()));
 
         return imovelRepository.save(saved);
     }
 
-    private Residencia persistirResidencia(Residencia residencia){
-        Set<Comodo> comodos = residencia.getComodos().stream().map(comodoRepository::save).collect(Collectors.toSet());
-        residencia.setComodos(null);
+    private Espaco persistirEspaco(Espaco espaco){
+        Set<Comodo> comodos = espaco.getComodos().stream().map(comodoRepository::save).collect(Collectors.toSet());
+        espaco.setComodos(null);
 
-        Residencia saved = residenciaRepository.save(residencia);
-        comodos.forEach(comodo -> comodo.setResidencia(saved));
+        Espaco saved = espacoRepository.save(espaco);
+        comodos.forEach(comodo -> comodo.setEspaco(saved));
 
         saved.setComodos(comodos);
 
-        return residenciaRepository.save(saved);
+        return espacoRepository.save(saved);
     }
 
 

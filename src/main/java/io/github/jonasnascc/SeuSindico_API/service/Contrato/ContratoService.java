@@ -5,7 +5,7 @@ import io.github.jonasnascc.SeuSindico_API.dto.Contrato.in.ContratoDTOIn;
 import io.github.jonasnascc.SeuSindico_API.dto.Contrato.out.ContratoDTOOut;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Contrato.Contrato;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Imovel;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Residencia;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Espaco;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Usuario;
@@ -28,24 +28,24 @@ public class ContratoService {
 
     private final ImovelRepository imovelRepository;
 
-    private final ResidenciaRepository residenciaRepository;
+    private final EspacoRepository espacoRepository;
 
     private final BoletoService boletoService;
 
     private final BoletoRepository boletoRepository;
 
-    public Long enviar(ContratoDTOIn dto, Long imovelId, Long residenciaId, String cpfOcupante, String login) {
+    public Long enviar(ContratoDTOIn dto, Long imovelId, Long espacoId, String cpfOcupante, String login) {
         Proprietario proprietario = this.validProprietario(login);
         Ocupante ocupante = this.validOcupante(cpfOcupante);
         Imovel imovel = this.validImovel(imovelId);
-        Residencia residencia = validResidencia(residenciaId);
+        Espaco espaco = validEspaco(espacoId);
 
-        Optional<Residencia> optResidencia = imovel.getResidencias().stream()
-                .filter(res -> res.getId().equals(residencia.getId())).findAny();
+        Optional<Espaco> optEspaco = imovel.getEspacos().stream()
+                .filter(res -> res.getId().equals(espaco.getId())).findAny();
 
-        if(optResidencia.isEmpty()) throw new RuntimeException("Residencia não pertence a esse imóvel.");
+        if(optEspaco.isEmpty()) throw new RuntimeException("Espaço não pertence a esse imóvel.");
 
-        this.checkContratoExiste(residenciaId);
+        this.checkContratoExiste(espacoId);
 
         Contrato contrato = DtoConverter.convertContratoDto(dto);
         contrato.setProprietario(proprietario);
@@ -53,9 +53,9 @@ public class ContratoService {
 
         Contrato savedContrato = contratoRepository.save(contrato);
 
-        residencia.setContrato(savedContrato);
+        espaco.setContrato(savedContrato);
 
-        savedContrato.setResidencia(residenciaRepository.save(residencia));
+        savedContrato.setEspaco(espacoRepository.save(espaco));
 
         savedContrato = contratoRepository.save(savedContrato);
         boletoService.gerarBoletos(savedContrato);
@@ -106,9 +106,9 @@ public class ContratoService {
                 .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
     }
 
-    private Residencia validResidencia(Long residenciaId){
-        return residenciaRepository.findById(residenciaId)
-                .orElseThrow(() -> new RuntimeException("Residencia não encontrada."));
+    private Espaco validEspaco(Long espacoId){
+        return espacoRepository.findById(espacoId)
+                .orElseThrow(() -> new RuntimeException("Espaco não encontrada."));
     }
 
     private Contrato validContrato(Long contratoId) {
@@ -126,8 +126,8 @@ public class ContratoService {
                 .orElseThrow(() -> new RuntimeException("Proprietário não encontrado."));
     }
 
-    private void checkContratoExiste(Long residenciaId) {
-        Optional<Contrato> optContrato = contratoRepository.findByResidenciaId(residenciaId);
+    private void checkContratoExiste(Long espacoId) {
+        Optional<Contrato> optContrato = contratoRepository.findByEspacoId(espacoId);
         if(optContrato.isPresent()) throw new RuntimeException("Contrato já existente.");
     }
 

@@ -14,16 +14,16 @@ public class ContratoController {
     private final ContratoService service;
     private final JwtTokenService jwtTokenService;
 
-    @PostMapping("proprietario/imoveis/{imovelId}/residencias/{residenciaId}/contratos/ocupante/{cpfOcupante}")
+    @PostMapping("proprietario/imoveis/{imovelId}/espacos/{espacoId}/contratos/ocupante/{cpfOcupante}")
     public ResponseEntity<?> save(
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long imovelId,
-            @PathVariable Long residenciaId,
+            @PathVariable Long espacoId,
             @PathVariable String cpfOcupante,
             @RequestBody ContratoDTOIn dto
     ) {
         String login = jwtTokenService.getSubject(authorization);
-        return ResponseEntity.ok(service.enviar(dto, imovelId, residenciaId, cpfOcupante, login));
+        return ResponseEntity.ok(service.enviar(dto, imovelId, espacoId, cpfOcupante, login));
     }
 
     @PatchMapping("ocupante/contratos/pendentes/{contratoId}/assinar")

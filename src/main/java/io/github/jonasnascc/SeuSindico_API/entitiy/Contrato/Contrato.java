@@ -1,7 +1,7 @@
 package io.github.jonasnascc.SeuSindico_API.entitiy.Contrato;
 
 import io.github.jonasnascc.SeuSindico_API.entitiy.Boleto.Boleto;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Residencia;
+import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.Espaco;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
 import jakarta.persistence.*;
@@ -46,7 +46,7 @@ public class Contrato {
     private ContratoStatus status;
 
     @OneToOne
-    private Residencia residencia;
+    private Espaco espaco;
 
     @ManyToOne
     private Proprietario proprietario;
@@ -63,7 +63,7 @@ public class Contrato {
                     LocalDate dataFim,
                     Integer intervaloDias,
                     Integer numeroParcelas,
-                    Residencia residencia,
+                    Espaco espaco,
                     Proprietario proprietario,
                     Ocupante ocupante,
                     ContratoStatus status,
@@ -75,7 +75,7 @@ public class Contrato {
         this.dataFim = dataFim;
         this.intervaloDias = intervaloDias;
         this.numeroParcelas = numeroParcelas;
-        this.residencia = residencia;
+        this.espaco = espaco;
         this.proprietario = proprietario;
         this.ocupante = ocupante;
         this.status = status;
@@ -108,7 +108,7 @@ public class Contrato {
     @PreRemove
     public void removeFromDependencies() {
         proprietario.removeContrato(this);
-        residencia.setContrato(null);
+        espaco.setContrato(null);
         if(ocupante!=null) ocupante.removeContrato(this);
     }
 

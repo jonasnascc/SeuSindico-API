@@ -10,9 +10,6 @@ import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.*;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class DtoConverter {
@@ -40,7 +37,7 @@ public abstract class DtoConverter {
                 contrato.getPreco(),
                 new UsuarioSimplesDTO(proprietario.getNome(), proprietario.getCpf()),
                 new UsuarioSimplesDTO(ocupante.getNome(), ocupante.getCpf()),
-                convertResidencia(contrato.getResidencia()),
+                convertResidencia(contrato.getEspaco()),
                 contrato.getObservacoes(),
                 contrato.getDataInicio(),
                 contrato.getDataFim(),
@@ -56,10 +53,9 @@ public abstract class DtoConverter {
                 imovel.getNome(),
                 imovel.getDescricao(),
                 imovel.getQuantidadeAndares(),
-                imovel.getResidenciasPorAndar(),
+                imovel.getEspacosPorAndar(),
                 convertEndereco(imovel.getEndereco()),
-                imovel.getResidencias().stream().map(DtoConverter::convertResidencia).collect(Collectors.toList()),
-                imovel.getTipo()
+                imovel.getEspacos().stream().map(DtoConverter::convertResidencia).collect(Collectors.toList())
         );
     }
 
@@ -68,14 +64,13 @@ public abstract class DtoConverter {
                 dto.nome(),
                 dto.descricao(),
                 dto.quantidadeAndares(),
-                dto.residenciasPorAndar(),
-                convertEnderecoDto(dto.endereco()),
-                dto.tipo()
+                dto.espacosPorAndar(),
+                convertEnderecoDto(dto.endereco())
         );
 
-        imovel.setResidencias(
-                dto.residencias().stream()
-                        .map(DtoConverter::convertResidenciaDto).collect(Collectors.toSet())
+        imovel.setEspacos(
+                dto.espacos().stream()
+                        .map(DtoConverter::convertEspacoDto).collect(Collectors.toSet())
         );
 
         return imovel;
@@ -105,24 +100,24 @@ public abstract class DtoConverter {
         );
     }
 
-    public static ResidenciaDTO convertResidencia(Residencia residencia){
-        return new ResidenciaDTO(
-                residencia.getId(),
-                residencia.getAndar(),
-                residencia.getNumero(),
-                residencia.getQuantidadeComodos(),
-                residencia.getMetrosQuadrados(),
-                residencia.getComodos().stream().map(DtoConverter::convertComodo).collect(Collectors.toList())
+    public static EspacoDTO convertResidencia(Espaco espaco){
+        return new EspacoDTO(
+                espaco.getId(),
+                espaco.getAndar(),
+                espaco.getNumero(),
+                espaco.getMetrosQuadrados(),
+                espaco.getComodos().stream().map(DtoConverter::convertComodo).collect(Collectors.toList()),
+                espaco.getTipo()
         );
     }
 
-    public static Residencia convertResidenciaDto(ResidenciaDTO dto) {
-        return new Residencia(
+    public static Espaco convertEspacoDto(EspacoDTO dto) {
+        return new Espaco(
                 dto.andar(),
                 dto.numero(),
-                dto.quantidadeComodos(),
                 dto.metrosQuadrados(),
-                dto.comodos().stream().map(DtoConverter::convertComodoDto).collect(Collectors.toSet())
+                dto.comodos().stream().map(DtoConverter::convertComodoDto).collect(Collectors.toSet()),
+                dto.tipo()
         );
     }
 

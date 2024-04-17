@@ -1,7 +1,7 @@
 package io.github.jonasnascc.SeuSindico_API.entitiy.Contrato;
 
 public enum ContratoStatus {
-    PENDENTE("pendende"),
+    PENDENTE("pendente"),
     ASSINADO("assinado");
 
     private String status;

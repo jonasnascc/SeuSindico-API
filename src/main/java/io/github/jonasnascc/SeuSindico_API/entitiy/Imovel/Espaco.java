@@ -2,7 +2,6 @@ package io.github.jonasnascc.SeuSindico_API.entitiy.Imovel;
 
 
 import io.github.jonasnascc.SeuSindico_API.entitiy.Contrato.Contrato;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +15,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Residencia {
+public class Espaco {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -25,11 +24,12 @@ public class Residencia {
 
     private Integer numero;
 
-    private Integer quantidadeComodos;
-
     private Double metrosQuadrados;
 
-    @OneToMany(mappedBy = "residencia")
+    @Enumerated(EnumType.STRING)
+    private EspacoType tipo;
+
+    @OneToMany(mappedBy = "espaco")
     private Set<Comodo> comodos;
 
     @OneToOne
@@ -38,19 +38,19 @@ public class Residencia {
     @ManyToOne
     private Imovel imovel;
 
-    public Residencia(Integer andar, Integer numero, Integer quantidadeComodos, Double metrosQuadrados, Set<Comodo> comodos) {
+    public Espaco(Integer andar, Integer numero, Double metrosQuadrados, Set<Comodo> comodos, EspacoType tipo) {
         this.andar = andar;
         this.numero = numero;
-        this.quantidadeComodos = quantidadeComodos;
         this.metrosQuadrados = metrosQuadrados;
         this.comodos = comodos;
+        this.tipo = tipo;
     }
 
     @PreRemove
     private void removerDependencias(){
-        if(contrato!=null) contrato.setResidencia(null);
-        if(imovel!=null) imovel.removerResidencia(this.id);
-        if(comodos!=null) comodos.forEach(comodo -> comodo.setResidencia(null));
+        if(contrato!=null) contrato.setEspaco(null);
+        if(imovel!=null) imovel.removerEspaco(this.id);
+        if(comodos!=null) comodos.forEach(comodo -> comodo.setEspaco(null));
     }
 
     public void removeComodo(Long id) {

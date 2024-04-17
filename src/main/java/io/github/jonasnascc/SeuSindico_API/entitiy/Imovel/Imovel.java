@@ -1,9 +1,6 @@
 package io.github.jonasnascc.SeuSindico_API.entitiy.Imovel;
 
-import io.github.jonasnascc.SeuSindico_API.entitiy.Contrato.Contrato;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Ocupante;
 import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Proprietario;
-import io.github.jonasnascc.SeuSindico_API.entitiy.Usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +26,7 @@ public class Imovel {
 
     private Integer quantidadeAndares;
 
-    private Integer residenciasPorAndar;
+    private Integer espacosPorAndar;
 
     @OneToOne
     private Endereco endereco;
@@ -38,36 +35,31 @@ public class Imovel {
     private Proprietario proprietario;
 
     @OneToMany(mappedBy = "imovel")
-    private Set<Residencia> residencias;
-
-    @Enumerated(EnumType.STRING)
-    private ImovelType tipo;
+    private Set<Espaco> espacos;
 
     public Imovel(
             String nome,
             String descricao,
             Integer quantidadeAndares,
-            Integer residenciasPorAndar,
-            Endereco endereco,
-            ImovelType tipo
+            Integer espacosPorAndar,
+            Endereco endereco
     ){
         this.nome = nome;
         this.descricao = descricao;
         this.quantidadeAndares = quantidadeAndares;
-        this.residenciasPorAndar = residenciasPorAndar;
+        this.espacosPorAndar = espacosPorAndar;
         this.endereco = endereco;
-        this.tipo = tipo;
     }
 
     @PreRemove
     private void removerDependencias() {
         proprietario.removeImovel(this.id);
         if(endereco!=null) endereco.setImovel(null);
-        if(residencias!=null) residencias.forEach(residencia -> residencia.setImovel(null));
+        if(espacos !=null) espacos.forEach(espaco -> espaco.setImovel(null));
 
     }
 
-    public void removerResidencia(Long id) {
-        if(residencias!=null) residencias.removeIf(res -> res.getId().equals(id));
+    public void removerEspaco(Long id) {
+        if(espacos !=null) espacos.removeIf(espaco -> espaco.getId().equals(id));
     }
 }

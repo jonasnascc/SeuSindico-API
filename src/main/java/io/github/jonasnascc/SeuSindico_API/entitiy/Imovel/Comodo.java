@@ -23,7 +23,7 @@ public class Comodo {
     private String detalhes;
 
     @ManyToOne
-    private Residencia residencia;
+    private Espaco espaco;
 
     public Comodo(String nome, Integer metrosQuadrados, String detalhes) {
         this.nome = nome;
@@ -33,6 +33,6 @@ public class Comodo {
 
     @PreRemove
     private void removeDependencies(){
-        if(residencia!=null) residencia.removeComodo(this.id);
+        if(espaco !=null) espaco.removeComodo(this.id);
     }
 }

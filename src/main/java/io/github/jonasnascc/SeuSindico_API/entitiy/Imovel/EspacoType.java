@@ -1,11 +1,11 @@
 package io.github.jonasnascc.SeuSindico_API.entitiy.Imovel;
 
-public enum ImovelType {
-    CASA("casa"), APARTAMENTO("apartamento"), ESCRITORIO("escritorio"), COMERCIO("comercio");
+public enum EspacoType {
+    CASA("casa"), APARTAMENTO("apartamento"), ESCRITORIO("escritorio"), PONTO_COMERCIAL("ponto_comercial");
 
     private String tipo;
 
-    ImovelType(String tipo){
+    EspacoType(String tipo){
         this.tipo = tipo;
     }
 

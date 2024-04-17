@@ -1,7 +1,5 @@
 package io.github.jonasnascc.SeuSindico_API.dto.Imovel;
 
-import io.github.jonasnascc.SeuSindico_API.entitiy.Imovel.ImovelType;
-
 import java.util.List;
 
 public record ImovelDTO(
@@ -9,8 +7,7 @@ public record ImovelDTO(
         String nome,
         String descricao,
         Integer quantidadeAndares,
-        Integer residenciasPorAndar,
+        Integer espacosPorAndar,
         EnderecoDTO endereco,
-        List<ResidenciaDTO> residencias,
-        ImovelType tipo
+        List<EspacoDTO> espacos
 ) {}
