@@ -53,7 +53,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
+                        .allowedOrigins("https://seusindico.onrender.com/")
                         .allowedHeaders("*").allowedMethods("*");
             }
         };
