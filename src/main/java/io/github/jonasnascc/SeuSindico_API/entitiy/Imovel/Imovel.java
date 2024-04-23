@@ -38,12 +38,14 @@ public class Imovel {
     private Set<Espaco> espacos;
 
     public Imovel(
+            Long id,
             String nome,
             String descricao,
             Integer quantidadeAndares,
             Integer espacosPorAndar,
             Endereco endereco
     ){
+        this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.quantidadeAndares = quantidadeAndares;

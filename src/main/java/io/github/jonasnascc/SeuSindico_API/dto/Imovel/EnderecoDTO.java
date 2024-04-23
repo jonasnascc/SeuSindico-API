@@ -1,6 +1,7 @@
 package io.github.jonasnascc.SeuSindico_API.dto.Imovel;
 
 public record EnderecoDTO(
+        Long enderecoId,
         String rua,
         String numero,
         String bairro,

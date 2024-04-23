@@ -33,13 +33,16 @@ public class Endereco {
     @OneToOne
     private Imovel imovel;
 
-    public Endereco(String rua,
+    public Endereco(
+                    Long id,
+                    String rua,
                     String numero,
                     String bairro,
                     String cidade,
                     String estado,
                     String cep,
                     String complemento) {
+        this.id = id;
         this.rua = rua;
         this.numero = numero;
         this.bairro = bairro;
