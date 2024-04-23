@@ -25,6 +25,16 @@ public class ImovelController {
         return ResponseEntity.ok(service.salvarImovel(dto, login));
     }
 
+    @PutMapping("/proprietario/imoveis")
+    public ResponseEntity<?> atualizar (
+            @RequestHeader("Authorization") String authorization,
+            @RequestBody ImovelDTO dto
+    )
+    {
+        String login = jwtTokenService.getSubject(authorization);
+        return ResponseEntity.ok(service.atualizarImovel(dto, login));
+    }
+
     @GetMapping("/proprietario/imoveis")
     public ResponseEntity<?> listar (
             @RequestHeader("Authorization") String authorization

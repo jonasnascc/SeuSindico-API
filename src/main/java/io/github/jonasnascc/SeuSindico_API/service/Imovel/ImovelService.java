@@ -33,6 +33,22 @@ public class ImovelService {
     public Long salvarImovel(ImovelDTO dto, String login) {
         Proprietario proprietario = proprietarioValidado(login);
 
+        Imovel imovel = DtoConverter.convertImovelDto(dto);
+        imovel.setId(null);
+        imovel.getEspacos().forEach(espaco -> {
+            espaco.setId(null);
+            espaco.getComodos().forEach(comodo -> comodo.setId(null));
+        });
+
+        return persistirImovel(imovel, proprietario).getId();
+    }
+
+    public Long atualizarImovel(ImovelDTO dto, String login) {
+        Proprietario proprietario = proprietarioValidado(login);
+
+        imovelRepository.findById(dto.codigo())
+                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
+
         return persistirImovel(DtoConverter.convertImovelDto(dto), proprietario).getId();
     }
 
@@ -95,7 +111,7 @@ public class ImovelService {
         endereco.setImovel(saved);
         enderecoRepository.save(endereco);
 
-        espacos.forEach(res -> res.setImovel(saved));
+        espacos.forEach(esp -> esp.setImovel(saved));
         saved.setEspacos(espacos.stream().map(espacoRepository::save).collect(Collectors.toSet()));
 
         return imovelRepository.save(saved);

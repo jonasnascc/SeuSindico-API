@@ -38,7 +38,8 @@ public class Espaco {
     @ManyToOne
     private Imovel imovel;
 
-    public Espaco(Integer andar, Integer numero, Double metrosQuadrados, Set<Comodo> comodos, EspacoType tipo) {
+    public Espaco(Long id, Integer andar, Integer numero, Double metrosQuadrados, Set<Comodo> comodos, EspacoType tipo) {
+        this.id = id;
         this.andar = andar;
         this.numero = numero;
         this.metrosQuadrados = metrosQuadrados;

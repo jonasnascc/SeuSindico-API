@@ -25,7 +25,8 @@ public class Comodo {
     @ManyToOne
     private Espaco espaco;
 
-    public Comodo(String nome, Integer metrosQuadrados, String detalhes) {
+    public Comodo(Long id, String nome, Integer metrosQuadrados, String detalhes) {
+        this.id = id;
         this.nome = nome;
         this.metrosQuadrados = metrosQuadrados;
         this.detalhes = detalhes;

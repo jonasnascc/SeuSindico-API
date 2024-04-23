@@ -61,16 +61,17 @@ public abstract class DtoConverter {
 
     public static Imovel convertImovelDto(ImovelDTO dto){
         Imovel imovel = new Imovel(
-                dto.nome(),
-                dto.descricao(),
-                dto.quantidadeAndares(),
-                dto.espacosPorAndar(),
-                convertEnderecoDto(dto.endereco())
+            dto.codigo(),
+            dto.nome(),
+            dto.descricao(),
+            dto.quantidadeAndares(),
+            dto.espacosPorAndar(),
+            convertEnderecoDto(dto.endereco())
         );
 
         imovel.setEspacos(
-                dto.espacos().stream()
-                        .map(DtoConverter::convertEspacoDto).collect(Collectors.toSet())
+            dto.espacos().stream()
+                    .map(DtoConverter::convertEspacoDto).collect(Collectors.toSet())
         );
 
         return imovel;
@@ -78,6 +79,7 @@ public abstract class DtoConverter {
 
     public static EnderecoDTO convertEndereco(Endereco endereco){
         return new EnderecoDTO(
+                endereco.getId(),
                 endereco.getRua(),
                 endereco.getNumero(),
                 endereco.getBairro(),
@@ -90,6 +92,7 @@ public abstract class DtoConverter {
 
     public static Endereco convertEnderecoDto(EnderecoDTO dto) {
         return new Endereco(
+                dto.enderecoId(),
                 dto.rua(),
                 dto.numero(),
                 dto.bairro(),
@@ -113,6 +116,7 @@ public abstract class DtoConverter {
 
     public static Espaco convertEspacoDto(EspacoDTO dto) {
         return new Espaco(
+                dto.espacoId(),
                 dto.andar(),
                 dto.numero(),
                 dto.metrosQuadrados(),
@@ -123,6 +127,7 @@ public abstract class DtoConverter {
 
     public static ComodoDTO convertComodo(Comodo comodo){
         return new ComodoDTO(
+                comodo.getId(),
                 comodo.getNome(),
                 comodo.getMetrosQuadrados(),
                 comodo.getDetalhes()
@@ -131,6 +136,7 @@ public abstract class DtoConverter {
 
     public static Comodo convertComodoDto(ComodoDTO dto) {
         return new Comodo(
+                dto.comodoId(),
                 dto.nome(),
                 dto.metrosQuadrados(),
                 dto.detalhes()
